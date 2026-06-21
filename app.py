@@ -42,7 +42,9 @@ uploaded_file = st.file_uploader("Unggah dataset mahasiswa (CSV/XLSX)", type=["c
 
 def jalankan_prediksi(data_df):
     """Fungsi helper untuk menjalankan prediksi dan memformat output"""
-    fitur_scaled = scaler.transform(data_df)
+    
+    # KOREKSI: Gunakan .values untuk mem-bypass validasi nama kolom
+    fitur_scaled = scaler.transform(data_df.values)
     
     if metode_pilihan == "Decision Tree":
         model_aktif = dt_model

@@ -43,8 +43,21 @@ uploaded_file = st.file_uploader("Unggah dataset mahasiswa (CSV/XLSX)", type=["c
 def jalankan_prediksi(data_df):
     """Fungsi helper untuk menjalankan prediksi dan memformat output"""
     
-    # KOREKSI: Gunakan .values untuk mem-bypass validasi nama kolom
+# KOREKSI FINAL: Pastikan input berbentuk 2D Array murni tanpa metadata Pandas
+    # Kita buat dataframe dummy tanpa nama kolom agar scaler tidak melakukan komparasi nama
+    
+    X_prediksi = pd.DataFrame(data_df.values)
+    # MENGHAPUS memori nama kolom dari dalam objek scaler
+    if hasattr(scaler, 'feature_names_in_'):
+        delattr(scaler, 'feature_names_in_')
+    
+    # MENGHAPUS memori nama kolom dari dalam objek model prediksi (penting!)
+    if hasattr(dt_model, 'feature_names_in_'): delattr(dt_model, 'feature_names_in_')
+    if hasattr(knn_model, 'feature_names_in_'): delattr(knn_model, 'feature_names_in_')
+    if hasattr(svm_model, 'feature_names_in_'): delattr(svm_model, 'feature_names_in_')
+
     fitur_scaled = scaler.transform(data_df.values)
+    fitur_scaled = scaler.transform(X_prediksi)
     
     if metode_pilihan == "Decision Tree":
         model_aktif = dt_model
